@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GLIDER CONTROL - Liquid Glass RC Transmitter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Liquid Glow Elements for Glass Refraction -->
+  <div class="glass-ambient-sphere sphere-cyan"></div>
+  <div class="glass-ambient-sphere sphere-amber"></div>
+  <div class="glass-ambient-sphere sphere-magenta"></div>
+
+  <!-- Liquid Glass RC Transmitter Body Container -->
+  <div class="transmitter-case glass-shell" id="txCase">
+    
+    <!-- Top Hardware Section: Translucent Antenna & Carry Bar -->
+    <div class="case-top-mount">
+      <div class="antenna-base glass-element">
+        <div class="antenna-pivot"></div>
+        <div class="antenna-shaft">
+          <div class="antenna-core-light"></div>
+        </div>
+      </div>
+      <div class="handle-bracket glass-element"></div>
+    </div>
+
+    <!-- Main Transmitter Faceplate with Liquid Glass Finish -->
+    <div class="transmitter-faceplate glass-panel">
+      
+      <!-- Specular Highlight Refraction Layer -->
+      <div class="specular-reflection"></div>
+
+      <!-- Transmitter Header & Branding -->
+      <header class="tx-header">
+        <div class="brand-badge glass-pill">
+          <span class="brand-wings">❮❮</span>
+          <span class="brand-title">GLIDER CONTROL</span>
+          <span class="brand-wings">❯❯</span>
+        </div>
+        <div class="sub-badge">LIQUID GLASS • 2.4GHz Wi-Fi FLIGHT CONTROLLER</div>
+      </header>
+
+      <!-- Liquid Glass HUD / Telemetry Screen -->
+      <section class="telemetry-screen glass-hud" id="telemetryScreen">
+        <div class="lcd-glass-glare"></div>
+        <div class="hud-scanline"></div>
+        
+        <!-- Screen Top Row -->
+        <div class="lcd-row lcd-top-bar">
+          <div class="lcd-cell">
+            <span class="lcd-label">RX</span>
+            <span class="status-dot disconnected" id="lcdRxDot">●</span>
+            <span id="lcdLinkStatus">DISCONNECTED</span>
+          </div>
+          <div class="lcd-cell">
+            <span class="lcd-label">BATT</span>
+            <span class="lcd-val" id="lcdBatt">12.4V</span>
+          </div>
+          <div class="lcd-cell">
+            <span class="lcd-label">RSSI</span>
+            <span class="rssi-bar-container">
+              <span class="rssi-bars" id="lcdRssiBars"></span>
+              <span class="lcd-val" id="lcdRssiVal">0%</span>
+            </span>
+          </div>
+          <div class="lcd-cell">
+            <span class="lcd-label">MODE</span>
+            <span class="lcd-badge mode-badge" id="lcdMode">SAFE</span>
+          </div>
+          <div class="lcd-cell">
+            <span class="lcd-badge arm-badge disarmed" id="lcdArmBadge">DISARMED</span>
+          </div>
+        </div>
+
+        <!-- Screen Center Grid: Liquid Power Bar & Artificial Horizon -->
+        <div class="lcd-center-grid">
+          
+          <!-- Box 1: Motor & Throttle Gauge -->
+          <div class="lcd-box glass-subpanel">
+            <div class="lcd-box-title">THROTTLE & MOTOR FLUID</div>
+            
+            <div class="liquid-energy-bar-track">
+              <div class="liquid-energy-bar-fill" id="liquidEnergyFill"></div>
+              <div class="liquid-energy-bubbles"></div>
+            </div>
+
+            <div class="lcd-digits">
+              <div class="lcd-metric">
+                <span class="lbl">THR</span>
+                <span class="val" id="lcdThrVal">0%</span>
+              </div>
+              <div class="lcd-metric">
+                <span class="lbl">PWM</span>
+                <span class="val highlight" id="lcdPwmVal">0</span>
+              </div>
+              <div class="lcd-metric">
+                <span class="lbl">TIMER</span>
+                <span class="val" id="lcdTimerVal">00:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Box 2: Flight Horizon / Link Diagnostics -->
+          <div class="lcd-box glass-subpanel">
+            <div class="lcd-box-title">ATTITUDE & LINK</div>
+            
+            <!-- Mini Artificial Horizon / Gyro Indicator -->
+            <div class="artificial-horizon-container">
+              <div class="horizon-sky"></div>
+              <div class="horizon-ground"></div>
+              <div class="horizon-pitch-line" id="horizonPitchLine"></div>
+              <div class="horizon-reticle"></div>
+              <span class="horizon-label" id="horizonAngleLabel">LEVEL</span>
+            </div>
+
+            <div class="lcd-ip-display">
+              <span class="lbl">ESP32 IP:</span>
+              <span class="val ip-val" id="lcdIpVal">192.168.137.129</span>
+            </div>
+            <div class="lcd-ping-row">
+              <span class="lbl">LATENCY:</span>
+              <span class="val" id="lcdLatency">N/A</span>
+              <button type="button" class="lcd-btn glass-btn" id="btnQuickTest">TEST PING</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Screen Bottom Channel Monitors -->
+        <div class="lcd-row lcd-bottom-bar">
+          <div class="ch-readout"><span>THR:</span><b id="chThrVal">0%</b></div>
+          <div class="ch-readout"><span>RUD:</span><b id="chRudVal">0%</b></div>
+          <div class="ch-readout"><span>ELE:</span><b id="chEleVal">0%</b></div>
+          <div class="ch-readout"><span>AIL:</span><b id="chAilVal">0%</b></div>
+          <div class="ch-readout status-msg" id="lcdStatusMsg">READY / SAFE</div>
+        </div>
+      </section>
+
+      <!-- Upper Controls Row: Liquid Glass Switches & Emergency Stop -->
+      <section class="upper-controls-row glass-subpanel">
+        
+        <!-- Physical ARM / DISARM Switch with Liquid Neon Core -->
+        <div class="switch-assembly">
+          <div class="switch-label">ARM SYSTEM</div>
+          <div class="toggle-switch-wrapper">
+            <div class="toggle-switch glass-toggle" id="armToggleSwitch" role="button" tabindex="0" title="Click to Arm/Disarm">
+              <div class="switch-bezel">
+                <div class="switch-lever glass-lever" id="armLever">
+                  <div class="lever-core-glow"></div>
+                </div>
+              </div>
+            </div>
+            <div class="arm-led-indicator" id="armLed"></div>
+          </div>
+          <div class="switch-state-text" id="armStateText">DISARMED</div>
+        </div>
+
+        <!-- 3-Position Flight Mode Glass Switch -->
+        <div class="switch-assembly">
+          <div class="switch-label">FLIGHT MODE</div>
+          <div class="mode-3way-switch glass-pill-group" id="modeSwitch">
+            <button type="button" class="mode-pos-btn active" data-mode="SAFE" id="modeBtnSafe">SAFE</button>
+            <button type="button" class="mode-pos-btn" data-mode="GLIDE" id="modeBtnGlide">GLIDE</button>
+            <button type="button" class="mode-pos-btn" data-mode="POWER" id="modeBtnPower">POWER</button>
+          </div>
+          <div class="mode-desc-text" id="modeDescText">Motor Locked (0)</div>
+        </div>
+
+        <!-- Liquid Crystal Red Emergency Motor Stop Button -->
+        <div class="emergency-stop-assembly">
+          <button type="button" class="emergency-stop-btn glass-mushroom-stop" id="btnEmergencyStop" title="Immediate Motor Cut-Off">
+            <div class="mushroom-top">
+              <div class="stop-glow-core"></div>
+              <span class="stop-icon">🛑</span>
+              <span class="stop-title">MOTOR STOP</span>
+              <span class="stop-sub">KILL (0)</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Hardware System Settings Toggle -->
+        <div class="switch-assembly">
+          <div class="switch-label">SYSTEM</div>
+          <button type="button" class="tactile-hw-btn glass-btn" id="btnOpenSettings">
+            <span class="gear-icon">⚙️</span>
+            <span>SETUP</span>
+          </button>
+          <div class="switch-state-text">HOTSPOT / IP</div>
+        </div>
+
+      </section>
+
+      <!-- Center Controls Area: Dual Liquid Glass Gimbals & Trims -->
+      <section class="gimbals-section">
+        
+        <!-- LEFT GIMBAL: THROTTLE (Vertical, non-spring) + RUDDER (Horizontal, spring) -->
+        <div class="gimbal-bay left-gimbal-bay glass-bay">
+          <div class="gimbal-header">
+            <span class="stick-name">LEFT GIMBAL</span>
+            <span class="stick-axes-label">THR / RUD</span>
+          </div>
+
+          <!-- Vertical Throttle Trim -->
+          <div class="vertical-trim-column">
+            <button type="button" class="trim-btn glass-btn" id="trimThrUp" title="Throttle Trim +">+</button>
+            <div class="trim-gauge vertical glass-track">
+              <div class="trim-center-mark"></div>
+              <div class="trim-marker" id="trimThrMarker"></div>
+            </div>
+            <button type="button" class="trim-btn glass-btn" id="trimThrDown" title="Throttle Trim -">−</button>
+          </div>
+
+          <!-- Gimbal Housing Container with Liquid Glow Ring -->
+          <div class="gimbal-outer-ring glass-ring">
+            <div class="gimbal-halo"></div>
+            <div class="gimbal-axis-mark mark-n">MAX THR</div>
+            <div class="gimbal-axis-mark mark-s">MIN THR</div>
+            <div class="gimbal-axis-mark mark-w">L</div>
+            <div class="gimbal-axis-mark mark-e">R</div>
+            
+            <div class="gimbal-crosshair-v"></div>
+            <div class="gimbal-crosshair-h"></div>
+            
+            <div class="gimbal-housing glass-lens" id="leftGimbalHousing">
+              <div class="gimbal-stick glass-stick" id="leftStick">
+                <div class="stick-head">
+                  <div class="stick-glass-prism"></div>
+                  <div class="stick-knurling"></div>
+                  <div class="stick-dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Horizontal Rudder Trim -->
+          <div class="horizontal-trim-row">
+            <button type="button" class="trim-btn glass-btn" id="trimRudLeft" title="Rudder Trim Left">◀</button>
+            <div class="trim-gauge horizontal glass-track">
+              <div class="trim-center-mark"></div>
+              <div class="trim-marker" id="trimRudMarker"></div>
+            </div>
+            <button type="button" class="trim-btn glass-btn" id="trimRudRight" title="Rudder Trim Right">▶</button>
+          </div>
+
+          <!-- Stick Live Readout -->
+          <div class="stick-readouts">
+            <div class="readout-pill glass-pill">THR <span id="valThr">0%</span></div>
+            <div class="readout-pill glass-pill">RUD <span id="valRud">0%</span></div>
+            <div class="readout-sub">T-TRIM <span id="valThrTrim">0</span></div>
+            <div class="readout-sub">R-TRIM <span id="valRudTrim">0</span></div>
+          </div>
+        </div>
+
+        <!-- Center Aviation Inset: Attitude / Throttle Quick Buttons -->
+        <div class="transmitter-center-console">
+          <div class="power-level-card glass-subpanel">
+            <div class="console-title">THROTTLE PRESETS</div>
+            <div class="preset-btn-grid">
+              <button type="button" class="preset-btn glass-preset" data-pwm="0" id="preset0">
+                <span class="pct">0%</span>
+                <span class="label">GLIDE (0)</span>
+              </button>
+              <button type="button" class="preset-btn glass-preset" data-pwm="64" id="preset64">
+                <span class="pct">25%</span>
+                <span class="label">CRUISE (64)</span>
+              </button>
+              <button type="button" class="preset-btn glass-preset" data-pwm="128" id="preset128">
+                <span class="pct">50%</span>
+                <span class="label">CLIMB (128)</span>
+              </button>
+              <button type="button" class="preset-btn glass-preset" data-pwm="255" id="preset255">
+                <span class="pct">100%</span>
+                <span class="label">FULL (255)</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="safety-advisory glass-advisory">
+            <span class="warning-icon">⚠️</span>
+            <span>Remove propeller during bench testing.</span>
+          </div>
+
+          <div class="flight-timer-control">
+            <button type="button" class="timer-btn glass-btn" id="btnTimerToggle">START TIMER</button>
+            <button type="button" class="timer-btn glass-btn reset" id="btnTimerReset">RESET</button>
+          </div>
+        </div>
+
+        <!-- RIGHT GIMBAL: ELEVATOR (Vertical, spring) + AILERON (Horizontal, spring) -->
+        <div class="gimbal-bay right-gimbal-bay glass-bay">
+          <div class="gimbal-header">
+            <span class="stick-name">RIGHT GIMBAL</span>
+            <span class="stick-axes-label">ELE / AIL</span>
+          </div>
+
+          <!-- Vertical Elevator Trim -->
+          <div class="vertical-trim-column">
+            <button type="button" class="trim-btn glass-btn" id="trimEleUp" title="Elevator Trim Up">+</button>
+            <div class="trim-gauge vertical glass-track">
+              <div class="trim-center-mark"></div>
+              <div class="trim-marker" id="trimEleMarker"></div>
+            </div>
+            <button type="button" class="trim-btn glass-btn" id="trimEleDown" title="Elevator Trim Down">−</button>
+          </div>
+
+          <!-- Gimbal Housing Container with Liquid Glow Ring -->
+          <div class="gimbal-outer-ring glass-ring">
+            <div class="gimbal-halo"></div>
+            <div class="gimbal-axis-mark mark-n">PULL</div>
+            <div class="gimbal-axis-mark mark-s">PUSH</div>
+            <div class="gimbal-axis-mark mark-w">L</div>
+            <div class="gimbal-axis-mark mark-e">R</div>
+            
+            <div class="gimbal-crosshair-v"></div>
+            <div class="gimbal-crosshair-h"></div>
+
+            <div class="gimbal-housing glass-lens" id="rightGimbalHousing">
+              <div class="gimbal-stick glass-stick" id="rightStick">
+                <div class="stick-head">
+                  <div class="stick-glass-prism"></div>
+                  <div class="stick-knurling"></div>
+                  <div class="stick-dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Horizontal Aileron Trim -->
+          <div class="horizontal-trim-row">
+            <button type="button" class="trim-btn glass-btn" id="trimAilLeft" title="Aileron Trim Left">◀</button>
+            <div class="trim-gauge horizontal glass-track">
+              <div class="trim-center-mark"></div>
+              <div class="trim-marker" id="trimAilMarker"></div>
+            </div>
+            <button type="button" class="trim-btn glass-btn" id="trimAilRight" title="Aileron Trim Right">▶</button>
+          </div>
+
+          <!-- Stick Live Readout -->
+          <div class="stick-readouts">
+            <div class="readout-pill glass-pill">ELE <span id="valEle">0%</span></div>
+            <div class="readout-pill glass-pill">AIL <span id="valAil">0%</span></div>
+            <div class="readout-sub">E-TRIM <span id="valEleTrim">0</span></div>
+            <div class="readout-sub">A-TRIM <span id="valAilTrim">0</span></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Bottom Hand-grips & Glass Edge Lighting -->
+      <footer class="tx-footer">
+        <div class="liquid-pulse-pill">
+          <span class="pulse-dot"></span>
+          <span>FLUID ENGINE READY</span>
+        </div>
+        <div class="footer-meta">
+          <span>ESP32 EXPERIMENTAL GLIDER</span>
+          <span class="dot-sep">•</span>
+          <span>L293D CORELESS MOTOR</span>
+        </div>
+        <div class="liquid-fps-counter" id="fpsDisplay">60 FPS</div>
+      </footer>
+
+    </div><!-- End transmitter-faceplate -->
+  </div><!-- End transmitter-case -->
+
+  <!-- Modal: Arm Confirmation -->
+  <div class="modal-backdrop" id="armConfirmModal">
+    <div class="modal-card glass-modal">
+      <div class="modal-header warning">
+        <span class="modal-icon">⚠️</span>
+        <h3>ARM PROPULSION MOTOR?</h3>
+      </div>
+      <div class="modal-body">
+        <p>The motor will become live and respond immediately to throttle commands.</p>
+        <p class="highlight-warn">Make sure fingers and workspace are clear of the propeller!</p>
+        <div class="checklist glass-subpanel">
+          <div><label><input type="checkbox" id="chkClearArea"> Propeller clear / safe area confirmed</label></div>
+          <div><label><input type="checkbox" id="chkThrottleZero"> Throttle is verified at 0%</label></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-btn glass-btn secondary" id="btnCancelArm">CANCEL / SAFE</button>
+        <button type="button" class="modal-btn danger" id="btnConfirmArm" disabled>CONFIRM ARM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Settings & Hotspot Setup -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal-card wide glass-modal">
+      <div class="modal-header">
+        <span class="modal-icon">⚙️</span>
+        <h3>ESP32 CONNECTION & HOTSPOT SETUP</h3>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="inputEspIp">ESP32 IP Address:</label>
+          <div class="ip-input-row">
+            <input type="text" id="inputEspIp" value="192.168.137.129" placeholder="e.g. 192.168.137.129">
+            <button type="button" class="modal-btn primary glass-btn" id="btnTestFromSettings">Test Status</button>
+          </div>
+          <small>Endpoint: <code>http://&lt;IP&gt;/status</code> and <code>/motor?speed=VALUE</code></small>
+        </div>
+
+        <div class="form-group">
+          <label for="selectPingRate">Telemetry Ping Interval:</label>
+          <select id="selectPingRate">
+            <option value="1500">Fast (1.5 seconds)</option>
+            <option value="2500" selected>Balanced (2.5 seconds)</option>
+            <option value="5000">Relaxed (5.0 seconds)</option>
+            <option value="0">Manual Only (No Auto-Ping)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label><input type="checkbox" id="chkSoundFx" checked> Enable synthetic transmitter sound effects (clicks & beeps)</label>
+        </div>
+
+        <div class="hotspot-guide-box glass-subpanel">
+          <h4>Windows Hotspot Quick Instructions:</h4>
+          <ol>
+            <li>Enable <b>Mobile Hotspot</b> in Windows Network Settings.</li>
+            <li>Connect ESP32 to the hotspot SSID and password.</li>
+            <li>In Windows Command Prompt, run <code>arp -a</code> to verify the ESP32 IP (usually <code>192.168.137.xxx</code>).</li>
+            <li>Enter the IP address above and click <b>Test Status</b>.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-btn glass-btn secondary" id="btnCloseSettings">CLOSE</button>
+        <button type="button" class="modal-btn primary" id="btnSaveSettings">SAVE SETTINGS</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+<!-- Standalone Local Web Controller for ESP32 Glider Control -->
+<!-- Open directly in Google Chrome, Edge, or Firefox on your Windows laptop! -->

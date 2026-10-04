@@ -1,0 +1,6 @@
+{
+  "name": "Glider Control",
+  "description": "Realistic RC airplane and glider transmitter simulator and local Wi-Fi controller for ESP32 and L293D motor driver.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
